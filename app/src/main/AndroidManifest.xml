@@ -24,8 +24,27 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ui.page.SignPage"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
             android:name=".ui.page.MainPage"
             android:exported="false" />
+        <activity
+            android:name=".ui.page.WorkoutDetailPage"
+            android:exported="false" />
+        <activity
+            android:name=".ui.page.AssessmentPage"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ui.page.EcgPage"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.page.WorkoutPage"
+            android:exported="false"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

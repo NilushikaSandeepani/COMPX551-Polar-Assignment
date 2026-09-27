@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        html, body { margin: 0; height: 100%; background: transparent; }
+        #chart { width: 100%; height: 100%; }
+    </style>
+    <script src="echarts.min.js"></script>
+</head>
+<body>
+<div id="chart"></div>
+<script>
+    // https://echarts.apache.org/examples/en/editor.html?c=gauge-grade
+    var chart = echarts.init(document.getElementById('chart'));
+
+    // Where Light, Moderate, Hard and Maximum start (bpm). Gauge goes from 40 to 200.
+    // These defaults are for max heart rate 200, setMaxHr() changes them.
+    var limits = [100, 120, 140, 160];
+
+    function zoneName(bpm) {
+        if (bpm < limits[0]) return 'Rest';
+        if (bpm < limits[1]) return 'Light';
+        if (bpm < limits[2]) return 'Moderate';
+        if (bpm < limits[3]) return 'Hard';
+        return 'Maximum';
+    }
+
+    // Turns a bpm into a position on the gauge, 0.0 to 1.0
+    function toFraction(bpm) {
+        return (bpm - 40) / 160;
+    }
+
+    chart.setOption({
+        series: [{
+            type: 'gauge',
+            min: 40,
+            max: 200,
+            splitNumber: 8,
+            radius: '90%',
+            axisLine: {
+                lineStyle: {
+                    width: 24,
+                    // Each colour ends at (zone limit - 40) / 160
+                    color: [
+                        [0.375, '#7FB3D5'],
+                        [0.5, '#58D68D'],
+                        [0.625, '#F4D03F'],
+                        [0.75, '#FF6B1A'],
+                        [1, '#E74C3C']
+                    ]
+                }
+            },
+            pointer: { itemStyle: { color: 'auto' }, width: 6 },
+            axisTick: { distance: -24, length: 6, lineStyle: { color: '#fff' } },
+            splitLine: { distance: -24, length: 24, lineStyle: { color: '#fff', width: 2 } },
+            axisLabel: { color: '#ffffffcc', distance: 32, fontSize: 12 },
+            title: { offsetCenter: [0, '75%'], color: '#fff', fontSize: 22, fontWeight: 'bold' },
+            detail: {
+                valueAnimation: true,
+                offsetCenter: [0, '45%'],
+                formatter: '{value} bpm',
+                color: '#fff',
+                fontSize: 30,
+                fontWeight: 'bold'
+            },
+            data: [{ value: 0, name: 'Rest' }]
+        }]
+    });
+
+    // Called from Kotlin with the user's max heart rate (220 - age).
+    // Zones start at 50%, 60%, 70% and 80% of it.
+    var currentMaxHr = 200;
+
+    function setMaxHr(maxHr) {
+        // Kotlin calls this every second, only redraw when it really changes.
+        // Otherwise the gauge animation restarts from 0 every time.
+        if (maxHr === currentMaxHr) return;
+        currentMaxHr = maxHr;
+
+        limits = [0.5, 0.6, 0.7, 0.8].map(function (p) { return Math.round(maxHr * p); });
+        chart.setOption({
+            series: [{
+                axisLine: {
+                    lineStyle: {
+                        color: [
+                            [toFraction(limits[0]), '#7FB3D5'],
+                            [toFraction(limits[1]), '#58D68D'],
+                            [toFraction(limits[2]), '#F4D03F'],
+                            [toFraction(limits[3]), '#FF6B1A'],
+                            [1, '#E74C3C']
+                        ]
+                    }
+                }
+            }]
+        });
+    }
+
+    // Called from Kotlin every second with the newest heart rate
+    function setValue(bpm) {
+        chart.setOption({
+            series: [{ data: [{ value: bpm, name: zoneName(bpm) }] }]
+        });
+    }
+
+    window.onresize = function () { chart.resize(); };
+</script>
+</body>
+</html>

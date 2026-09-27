@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        html, body { margin: 0; height: 100%; background: transparent; }
+        #chart { width: 100%; height: 100%; }
+    </style>
+    <script src="echarts.min.js"></script>
+</head>
+<body>
+<div id="chart"></div>
+<script>
+    // Minutes of workout per day, with a line for the average
+    var chart = echarts.init(document.getElementById('chart'));
+
+    chart.setOption({
+        grid: { left: 36, right: 12, top: 28, bottom: 28 },
+        tooltip: { trigger: 'axis', formatter: '{b}: {c} min' },
+        xAxis: {
+            type: 'category',
+            data: [],
+            axisLabel: { color: '#ffffffcc' },
+            axisLine: { lineStyle: { color: '#ffffff66' } },
+            axisTick: { show: false }
+        },
+        yAxis: {
+            type: 'value',
+            name: 'min',
+            nameTextStyle: { color: '#ffffffcc' },
+            axisLabel: { color: '#ffffffcc' },
+            splitLine: { lineStyle: { color: '#ffffff22' } }
+        },
+        series: [{
+            type: 'bar',
+            data: [],
+            barMaxWidth: 28,
+            itemStyle: { color: '#ffffff', borderRadius: [6, 6, 0, 0] },
+            markLine: {
+                symbol: 'none',
+                lineStyle: { color: '#FFD60A', width: 2, type: 'solid' },
+                label: { color: '#FFD60A', formatter: 'avg {c}', position: 'insideEndTop' },
+                data: []
+            }
+        }]
+    });
+
+    // Called from Kotlin
+    // labels:  ['Mon', 'Tue', ...]
+    // minutes: [30, 0, 45, ...]
+    // average: 25
+    function setData(labels, minutes, average) {
+        chart.setOption({
+            xAxis: { data: labels },
+            series: [{
+                data: minutes,
+                markLine: { data: average > 0 ? [{ yAxis: average }] : [] }
+            }]
+        });
+    }
+
+    window.onresize = function () { chart.resize(); };
+</script>
+</body>
+</html>

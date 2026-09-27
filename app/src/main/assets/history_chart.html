@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        html, body { margin: 0; height: 100%; background: transparent; }
+        #chart { width: 100%; height: 100%; }
+    </style>
+    <script src="echarts.min.js"></script>
+</head>
+<body>
+<div id="chart"></div>
+<script>
+    // Whole workout heart rate. Pinch or drag the slider to zoom in.
+    // https://echarts.apache.org/examples/en/editor.html?c=area-simple
+    var chart = echarts.init(document.getElementById('chart'));
+
+    // 75 -> "1:15"
+    function formatTime(seconds) {
+        var m = Math.floor(seconds / 60);
+        var s = seconds % 60;
+        return m + ':' + (s < 10 ? '0' + s : s);
+    }
+
+    chart.setOption({
+        grid: { left: 40, right: 16, top: 16, bottom: 72 },
+        tooltip: { trigger: 'axis', formatter: function (p) { return p[0].name + '<br/>' + p[0].value + ' bpm'; } },
+        xAxis: { type: 'category', boundaryGap: false, data: [], axisLabel: { color: '#555' } },
+        yAxis: { type: 'value', scale: true, axisLabel: { color: '#555' }, splitLine: { lineStyle: { color: '#eee' } } },
+        dataZoom: [
+            { type: 'inside' },
+            { type: 'slider', height: 24, bottom: 12 }
+        ],
+        series: [{
+            type: 'line',
+            data: [],
+            symbol: 'none',
+            lineStyle: { color: '#FF6B1A', width: 2 },
+            areaStyle: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    { offset: 0, color: '#FF6B1A99' },
+                    { offset: 1, color: '#FF6B1A10' }
+                ])
+            }
+        }]
+    });
+
+    // Called from Kotlin with one heart rate per second
+    function setData(heartRates) {
+        var times = [];
+        for (var i = 0; i < heartRates.length; i++) {
+            times.push(formatTime(i));
+        }
+        chart.setOption({
+            xAxis: { data: times },
+            series: [{ data: heartRates }]
+        });
+    }
+
+    window.onresize = function () { chart.resize(); };
+</script>
+</body>
+</html>

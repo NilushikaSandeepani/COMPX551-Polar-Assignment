@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        html, body { margin: 0; height: 100%; background: transparent; }
+        #chart { width: 100%; height: 100%; }
+    </style>
+    <script src="echarts.min.js"></script>
+</head>
+<body>
+<div id="chart"></div>
+<script>
+    // Floating bars: each bar goes from the lowest to the highest heart rate
+    // in one part of the workout. Trick: stack an invisible bar (0 -> min)
+    // under a visible bar (min -> max).
+    var chart = echarts.init(document.getElementById('chart'));
+
+    chart.setOption({
+        grid: { left: 36, right: 12, top: 24, bottom: 12 },
+        xAxis: { type: 'category', data: [], show: false },
+        yAxis: {
+            type: 'value',
+            axisLabel: { color: '#ffffffcc' },
+            splitLine: { lineStyle: { color: '#ffffff22' } }
+        },
+        series: [
+            {
+                // Invisible part
+                type: 'bar',
+                stack: 'range',
+                data: [],
+                itemStyle: { color: 'transparent' }
+            },
+            {
+                // Visible part
+                type: 'bar',
+                stack: 'range',
+                data: [],
+                barWidth: '55%',
+                itemStyle: { color: '#ffffff', borderRadius: 8 }
+            }
+        ]
+    });
+
+    // Called from Kotlin with the min and max of each part
+    function setData(mins, maxs) {
+        var sizes = [];
+        var labels = [];
+        for (var i = 0; i < mins.length; i++) {
+            sizes.push(maxs[i] - mins[i]);
+            labels.push(i);
+        }
+        var lowest = Math.min.apply(null, mins);
+        chart.setOption({
+            xAxis: { data: labels },
+            // Start the axis a bit under the lowest value so the bars are easy to see
+            yAxis: { min: Math.floor((lowest - 10) / 10) * 10 },
+            series: [{ data: mins }, { data: sizes }]
+        });
+    }
+
+    window.onresize = function () { chart.resize(); };
+</script>
+</body>
+</html>

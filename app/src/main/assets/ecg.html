@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        html, body { margin: 0; height: 100%; background: transparent; }
+        #chart { width: 100%; height: 100%; }
+    </style>
+    <script src="echarts.min.js"></script>
+</head>
+<body>
+<div id="chart"></div>
+<script>
+    // ECG from the Polar H10 is 130 samples per second, in microvolts (µV)
+    var SAMPLE_RATE = 130;
+    var chart = echarts.init(document.getElementById('chart'));
+
+    chart.setOption({
+        grid: { left: 48, right: 16, top: 36, bottom: 32 },
+        xAxis: {
+            type: 'value',
+            min: 0,
+            max: 3,
+            interval: 0.5,
+            name: 's',
+            axisLabel: { color: '#ffffffcc' },
+            axisLine: { lineStyle: { color: '#ffffff66' } },
+            // Vertical lines so it looks like ECG paper
+            splitLine: { show: true, lineStyle: { color: '#ffffff22' } }
+        },
+        yAxis: {
+            type: 'value',
+            min: -500,
+            max: 1500,
+            interval: 500,
+            name: 'µV',
+            nameTextStyle: { color: '#ffffffcc' },
+            axisLabel: { color: '#ffffffcc' },
+            splitLine: { lineStyle: { color: '#ffffff22' } }
+        },
+        series: [{
+            type: 'line',
+            data: [],
+            showSymbol: false,
+            lineStyle: { color: '#ffffff', width: 2 }
+        }],
+        // Data comes 10 times a second, so turn animation off or it looks laggy
+        animation: false
+    });
+
+    // Called from Kotlin with the last 3 seconds of ECG samples
+    function setData(samples) {
+        var points = [];
+        for (var i = 0; i < samples.length; i++) {
+            points.push([i / SAMPLE_RATE, samples[i]]);
+        }
+        chart.setOption({ series: [{ data: points }] });
+    }
+
+    window.onresize = function () { chart.resize(); };
+</script>
+</body>
+</html>

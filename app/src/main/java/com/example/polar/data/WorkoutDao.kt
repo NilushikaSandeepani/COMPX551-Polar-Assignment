@@ -1,0 +1,20 @@
+package com.example.polar.data
+
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
+
+@Dao
+interface WorkoutDao {
+
+    @Insert
+    suspend fun insert(workout: Workout)
+
+    // Flow = the list updates by itself when a new workout is saved
+    @Query("SELECT * FROM workouts WHERE username = :username ORDER BY startTime DESC")
+    fun getWorkouts(username: String): Flow<List<Workout>>
+
+    @Query("SELECT * FROM workouts WHERE id = :id")
+    suspend fun findById(id: Long): Workout?
+}
