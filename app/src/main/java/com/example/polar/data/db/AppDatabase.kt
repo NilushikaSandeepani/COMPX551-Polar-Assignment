@@ -1,4 +1,4 @@
-package com.example.polar.data
+package com.example.polar.data.db
 
 import android.content.Context
 import androidx.room.Database
@@ -6,6 +6,12 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.example.polar.data.dao.AssessmentDao
+import com.example.polar.data.dao.UserDao
+import com.example.polar.data.dao.WorkoutDao
+import com.example.polar.data.entity.Assessment
+import com.example.polar.data.entity.User
+import com.example.polar.data.entity.Workout
 
 // https://developer.android.com/training/data-storage/room
 @Database(entities = [User::class, Assessment::class, Workout::class], version = 4, exportSchema = false)

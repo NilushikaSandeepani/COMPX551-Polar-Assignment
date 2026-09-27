@@ -34,21 +34,24 @@ An Android app (Kotlin + Jetpack Compose) for the **Polar H10** chest strap. Use
 app/src/main/
 ├── java/com/example/polar/
 │   ├── MainActivity.kt              Welcome screen → SignPage
-│   ├── data/                        Everything about data (no UI)
-│   │   ├── AppDatabase.kt           Room database (v4) + migrations 2→3, 3→4
-│   │   ├── User.kt / UserDao.kt     Accounts (unique username)
-│   │   ├── Assessment.kt / …Dao.kt  One assessment per user (@Upsert, Flow)
-│   │   ├── Workout.kt / …Dao.kt     Saved workouts (per-second HR stored as CSV)
-│   │   ├── WorkoutType.kt           List of sports + emoji
-│   │   └── Health.kt                BMI, max HR, zone limits, calories (Keytel)
+│   ├── data/                        Storage only (no UI, no calculations)
+│   │   ├── db/AppDatabase.kt        Room database (v4) + migrations 2→3, 3→4
+│   │   ├── entity/                  Tables: User, Assessment, Workout
+│   │   ├── dao/                     Queries: UserDao, AssessmentDao (@Upsert, Flow), WorkoutDao (Flow)
+│   │   └── model/WorkoutType.kt     List of sports + emoji (not a table)
+│   ├── logic/                       Pure functions (no UI, no database) — easy to unit test
+│   │   ├── Health.kt                BMI, max HR, zone limits, calories (Keytel)
+│   │   ├── Ecg.kt                   R-peak detection → BPM, simulated ECG signal
+│   │   ├── History.kt               Minutes per day, day labels, start of day
+│   │   └── Format.kt                "1 hr 20 min", "01:15"
 │   └── ui/
 │       ├── page/
 │       │   ├── SignPage.kt          Sign in / sign up
 │       │   ├── MainPage.kt          Dashboard, tabs, bottom bar, workout picker
-│       │   ├── HistoryTab.kt        History tab cards + date helpers
+│       │   ├── HistoryTab.kt        History tab cards
 │       │   ├── WorkoutPage.kt       Live workout (pager: line chart / gauge)
 │       │   ├── WorkoutDetailPage.kt One past workout, zoomable chart
-│       │   ├── EcgPage.kt           30 s resting ECG + R-peak detection
+│       │   ├── EcgPage.kt           30 s resting ECG screen
 │       │   ├── AssessmentPage.kt    Assessment form + results
 │       │   └── EChartsView.kt       Reusable WebView wrapper for ECharts
 │       └── theme/                   Colours, fonts, Material theme

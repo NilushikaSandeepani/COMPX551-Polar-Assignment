@@ -46,3 +46,8 @@ fun EChartsView(fileName: String, script: String) {
         modifier = Modifier.fillMaxSize()
     )
 }
+
+// ["Mon", "Tue"] -> ['Mon','Tue'] so JavaScript can read it
+fun toJsStrings(list: List<String>): String {
+    return list.joinToString(",", "[", "]") { "'$it'" }
+}

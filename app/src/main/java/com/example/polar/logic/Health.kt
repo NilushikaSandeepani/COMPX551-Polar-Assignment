@@ -1,5 +1,6 @@
-package com.example.polar.data
+package com.example.polar.logic
 
+import com.example.polar.data.entity.Assessment
 import kotlin.math.roundToInt
 
 // BMI = weight (kg) / height (m)^2

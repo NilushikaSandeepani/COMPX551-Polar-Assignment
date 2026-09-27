@@ -1,4 +1,4 @@
-package com.example.polar.data
+package com.example.polar.data.model
 
 data class WorkoutType(val name: String, val emoji: String)
 
@@ -13,3 +13,8 @@ val workoutTypes = listOf(
     WorkoutType("Tennis", "🎾"),
     WorkoutType("Strength Training", "🏋️")
 )
+
+// "Running" -> "🏃"
+fun emojiFor(type: String): String {
+    return workoutTypes.find { it.name == type }?.emoji ?: "🏃"
+}

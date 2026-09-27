@@ -3,7 +3,6 @@ package com.example.polar.ui.page
 import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,13 +26,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.polar.data.Assessment
-import com.example.polar.data.Workout
-import com.example.polar.data.caloriesBurned
-import com.example.polar.data.heartRateList
-import com.example.polar.data.workoutTypes
+import com.example.polar.data.entity.Assessment
+import com.example.polar.data.entity.Workout
+import com.example.polar.data.entity.heartRateList
+import com.example.polar.data.model.emojiFor
+import com.example.polar.logic.caloriesBurned
+import com.example.polar.logic.dayLabels
+import com.example.polar.logic.formatDuration
+import com.example.polar.logic.minutesPerDay
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import kotlin.math.roundToInt
@@ -254,63 +255,4 @@ fun RangeButton(text: String, selected: Boolean, onClick: () -> Unit) {
             fontWeight = FontWeight.Bold
         )
     }
-}
-
-// Total workout minutes for each of the last [days] days, oldest first
-fun minutesPerDay(workouts: List<Workout>, days: Int): List<Double> {
-    val result = mutableListOf<Double>()
-    for (i in days - 1 downTo 0) {
-        val dayStart = startOfDay(daysAgo = i)
-        val dayEnd = startOfDay(daysAgo = i - 1)
-        var seconds = 0
-        for (workout in workouts) {
-            if (workout.startTime >= dayStart && workout.startTime < dayEnd) {
-                seconds += workout.durationSec
-            }
-        }
-        // Minutes with 1 decimal place
-        result.add((seconds / 60.0 * 10).roundToInt() / 10.0)
-    }
-    return result
-}
-
-// Labels for the last [days] days, e.g. "Mon" (pattern "EEE") or "27" (pattern "d")
-fun dayLabels(days: Int, pattern: String): List<String> {
-    val format = SimpleDateFormat(pattern, Locale.ENGLISH)
-    val labels = mutableListOf<String>()
-    for (i in days - 1 downTo 0) {
-        labels.add(format.format(Date(startOfDay(daysAgo = i))))
-    }
-    return labels
-}
-
-// Midnight of today minus [daysAgo] days, in milliseconds
-fun startOfDay(daysAgo: Int): Long {
-    val calendar = Calendar.getInstance()
-    calendar.set(Calendar.HOUR_OF_DAY, 0)
-    calendar.set(Calendar.MINUTE, 0)
-    calendar.set(Calendar.SECOND, 0)
-    calendar.set(Calendar.MILLISECOND, 0)
-    calendar.add(Calendar.DAY_OF_MONTH, -daysAgo)
-    return calendar.timeInMillis
-}
-
-// ["Mon", "Tue"] -> ['Mon','Tue'] so JavaScript can read it
-fun toJsStrings(list: List<String>): String {
-    return list.joinToString(",", "[", "]") { "'$it'" }
-}
-
-// 4800 -> "1 hr 20 min", 720 -> "12 min", 45 -> "45 s"
-fun formatDuration(seconds: Int): String {
-    val hours = seconds / 3600
-    val minutes = (seconds % 3600) / 60
-    return when {
-        hours > 0 -> "$hours hr $minutes min"
-        minutes > 0 -> "$minutes min"
-        else -> "$seconds s"
-    }
-}
-
-fun emojiFor(type: String): String {
-    return workoutTypes.find { it.name == type }?.emoji ?: "🏃"
 }

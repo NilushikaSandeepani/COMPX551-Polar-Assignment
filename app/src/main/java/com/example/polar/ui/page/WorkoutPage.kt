@@ -32,9 +32,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -46,9 +46,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.polar.R
-import com.example.polar.data.AppDatabase
-import com.example.polar.data.Workout
-import com.example.polar.data.maxHeartRate
+import com.example.polar.data.db.AppDatabase
+import com.example.polar.data.entity.Workout
+import com.example.polar.logic.formatTime
+import com.example.polar.logic.maxHeartRate
 import com.example.polar.ui.theme.Orange
 import com.example.polar.ui.theme.PolarTheme
 import com.example.polar.ui.theme.WorkSans
@@ -250,11 +251,4 @@ fun SmallStat(label: String, value: Int, modifier: Modifier = Modifier) {
         Text(text = "$value", color = Color.White, fontSize = 26.sp, fontWeight = FontWeight.Bold)
         Text(text = "bpm", color = Color.White.copy(alpha = 0.8f), fontSize = 12.sp)
     }
-}
-
-// 75 -> "01:15"
-fun formatTime(seconds: Int): String {
-    val minutes = seconds / 60
-    val secs = seconds % 60
-    return String.format("%02d:%02d", minutes, secs)
 }

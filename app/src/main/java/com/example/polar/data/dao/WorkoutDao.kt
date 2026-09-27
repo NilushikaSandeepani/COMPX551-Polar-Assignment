@@ -1,8 +1,9 @@
-package com.example.polar.data
+package com.example.polar.data.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import com.example.polar.data.entity.Workout
 import kotlinx.coroutines.flow.Flow
 
 @Dao

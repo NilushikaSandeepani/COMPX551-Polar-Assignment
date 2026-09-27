@@ -1,4 +1,4 @@
-package com.example.polar.data
+package com.example.polar.data.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
