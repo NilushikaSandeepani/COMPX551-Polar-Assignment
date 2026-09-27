@@ -1,0 +1,29 @@
+# Gradle / build output
+.gradle/
+.kotlin/
+build/
+*/build/
+
+# Machine-specific (SDK path etc.)
+local.properties
+
+# Android Studio
+.idea/
+*.iml
+.navigation/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Signing keys
+*.jks
+*.keystore
+
+# Logs / local databases pulled from a device
+*.log
+*.db
+*-wal
+*-shm
+
+# macOS
+.DS_Store
